@@ -1,6 +1,11 @@
 #include "nodebase.h"
 
-NodeBase::NodeBase(QObject *parent) : QObject(parent)
+#include <iostream>
+
+NodeBase::NodeBase()
 {
+    std::cout << "Node created" << std::endl;
+}
+NodeBase::NodeBase(const NodeBase&){
 
 }

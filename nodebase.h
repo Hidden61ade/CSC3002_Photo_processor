@@ -1,15 +1,20 @@
 #ifndef NODEBASE_H
 #define NODEBASE_H
 #include <QObject>
+#include "port.h"
 
-class NodeBase : public QObject
+class NodeBase
 {
-    Q_OBJECT
 public:
-    explicit NodeBase(QObject *parent = nullptr);
+    NodeBase();
+    NodeBase(const NodeBase& nodebase);
 
-signals:
 
+
+
+    bool operator==(const NodeBase &other) const{
+        return this==&other;
+    }
 };
 
 #endif // NODEBASE_H

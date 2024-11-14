@@ -3,38 +3,40 @@
 
 #include <string>
 #include <functional>
-#include <nodebase.h>
+#include <QVariant>
+#include <QImage>
 //#include <list>
 
-template <typename T>
-class Port
-{
+//typedef enum struct pt{
+//    Sampler,
+//    Tex,
+//    UV,
+//    Grad,
+//}ParaType;
+
+template<typename T>
+class Port{
 public:
-    enum struct ParaType{
-        Int,
-        Bool,
-        Float,
-        Vec2,
-        //Vec3,
-        Vec4,
-        //Sampler,
-        //Tex,
-        //UV,
-        //Grad,
-    };
-
-
-    Port(ParaType tp, NodeBase &node);
+    virtual void SetData(T &arg);
     virtual T &GetData();
-    void SetData(T &value);
-    ParaType GetDataType();
-
-
-private:
-    ParaType m_dataType;
-    NodeBase &m_baseNode;
-    T m_data;
-    std::function<T&(void)> m_dataExtractFunc;
+    virtual ~Port();
 };
 
+class VariantPort : public Port<QVariant>
+{
+public:
+    void SetData(QVariant &arg) override;
+    QVariant &GetData() override;
+private:
+    QVariant *data = nullptr;
+};
+
+class ImagePort : public Port<QImage>
+{
+public:
+    void SetData(QImage &arg) override;
+    QImage &GetData() override;
+private:
+    QImage *data = nullptr;
+};
 #endif // PORT_H

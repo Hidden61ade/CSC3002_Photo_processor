@@ -4,7 +4,7 @@
 #include <QObject>
 #include <list>
 #include <iostream>
-#include <port.h>
+#include "Nodes.h"
 
 class Pipeline : public QObject
 {
@@ -21,8 +21,15 @@ private:
 //Implementation
 public:
     void TestDoSth();
-    template<typename T> bool AddConnection(Port<T> &a, Port<T> &b);
 
+    void AddNode(NodeBase &node);
+    void RemoveNode(NodeBase &node);
+
+    void Execute();
+
+
+private:
+    std::list<NodeBase> m_nodes;
 //Signal & Slots
 signals:
     void OnNewConnectionAdded();
