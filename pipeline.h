@@ -25,7 +25,7 @@ public:
     void AddNode(NodeBase &node);
     void RemoveNode(NodeBase &node);
 
-    void AddConnection(void *PortA, void *PortB, bool isVariant);
+    NodeConnection *AddConnection(void *PortA, void *PortB, bool isVariant);
 
     void Execute();
 

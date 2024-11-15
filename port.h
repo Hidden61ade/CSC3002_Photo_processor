@@ -15,18 +15,18 @@ class NodeConnection;
 template<typename T>
 class Port{
 public:
-    virtual void SetData(T &arg);
-    virtual T &GetData();
+    virtual void SetData(T *arg);
+    virtual T *GetData();
     virtual ~Port();
     virtual bool IsVariant();
-    NodeConnection *upstreamConnection = nullptr;
+    NodeConnection *streamConnection = nullptr;
 };
 
 class VariantPort : public Port<QVariant>
 {
 public:
-    void SetData(QVariant &arg) override;
-    QVariant &GetData() override;
+    void SetData(QVariant *arg) override;
+    QVariant *GetData() override;
     bool IsVariant() override;
 private:
     QVariant *data = nullptr;
@@ -35,8 +35,8 @@ private:
 class ImagePort : public Port<QImage>
 {
 public:
-    void SetData(QImage &arg) override;
-    QImage &GetData() override;
+    void SetData(QImage *arg) override;
+    QImage *GetData() override;
     bool IsVariant() override;
 private:
     QImage *data = nullptr;

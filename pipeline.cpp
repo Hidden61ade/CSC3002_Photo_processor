@@ -19,11 +19,11 @@ void Pipeline::RemoveNode(NodeBase &node){
     only->m_nodes.remove(node);
     std::cout << "Node removed" << std::endl;
 }
-
-void Pipeline::AddConnection(void *a, void *b, bool isVariant)
+NodeConnection* Pipeline::AddConnection(void *a, void *b, bool isVariant)
 {
     NodeConnection *n = new NodeConnection(a,b,isVariant);
     n->ConnectData();
+    return n;
 }
 
 void Pipeline::TestDoSth()

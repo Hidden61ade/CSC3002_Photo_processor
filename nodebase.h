@@ -7,6 +7,7 @@ class NodeBase
 public:
     NodeBase();
     NodeBase(const NodeBase& nodebase);
+    virtual ~NodeBase();
     virtual void Execute();
 
     bool operator==(const NodeBase &other) const{

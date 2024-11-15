@@ -1,5 +1,6 @@
 #include "nodebase.h"
 #include "port.h"
+#include "nodeconnection.h"
 
 #ifndef NODES_H
 #define NODES_H
@@ -31,7 +32,6 @@ public:
 
     Port<QVariant> *input0 = nullptr;
     Port<QVariant> *input1 = nullptr;
-//    void* inports[2] = {this->input0->upstreamConnection,this->input1->upstreamConnection};
 };
 
 #endif // NODES_H
