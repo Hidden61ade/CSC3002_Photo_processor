@@ -28,5 +28,5 @@ NodeConnection* Pipeline::AddConnection(void *a, void *b, bool isVariant)
 
 void Pipeline::TestDoSth()
 {
-    std::cout << "something todo" << std::endl;
+    std::cout << "[PIPELINE] Pipeline Singleton Test." << std::endl;
 }

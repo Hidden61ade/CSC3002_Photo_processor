@@ -51,12 +51,15 @@ void AddNode::Execute(){
     }
     QVariant a = *input0->GetData();
     QVariant b = *input1->GetData();
-    if(a.type()!=b.type()) return;
-    if(a.type()==QVariant::Int){
-        QVariant t = a.toInt()+b.toInt();
-        output0->SetData(&t);
-    }else if(a.type()==QVariant::Double){
+
+//    if(a.type()!=b.type()) return;
+
+    if(a.type()==QVariant::Double||b.type()==QVariant::Double){
         QVariant t = a.toDouble()+b.toDouble();
+        output0->SetData(&t);
+
+    }else if(a.type()==QVariant::Int&&b.type()==QVariant::Int){
+        QVariant t = a.toInt()+b.toInt();
         output0->SetData(&t);
     }
 }
