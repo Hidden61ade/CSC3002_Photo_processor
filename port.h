@@ -27,6 +27,7 @@ class VariantPort : public Port<QVariant>
 public:
     void SetData(QVariant *arg) override;
     QVariant *GetData() override;
+//    ~VariantPort();
     bool IsVariant() override;
 private:
     QVariant *data = nullptr;
@@ -37,6 +38,7 @@ class ImagePort : public Port<QImage>
 public:
     void SetData(QImage *arg) override;
     QImage *GetData() override;
+//    ~ImagePort();
     bool IsVariant() override;
 private:
     QImage *data = nullptr;

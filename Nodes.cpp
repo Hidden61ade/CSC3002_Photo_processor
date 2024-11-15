@@ -31,6 +31,9 @@ AddNode::AddNode():NodeBase(){
     this->output0 = new VariantPort();
 }
 AddNode::~AddNode(){
+    delete this->output0->streamConnection;
+    delete this->input0->streamConnection;
+    delete this->input1->streamConnection;
     delete this->output0;
     delete this->input0;
     delete this->input1;
@@ -57,7 +60,6 @@ void AddNode::Execute(){
     if(a.type()==QVariant::Double||b.type()==QVariant::Double){
         QVariant t = a.toDouble()+b.toDouble();
         output0->SetData(&t);
-
     }else if(a.type()==QVariant::Int&&b.type()==QVariant::Int){
         QVariant t = a.toInt()+b.toInt();
         output0->SetData(&t);
