@@ -29,10 +29,17 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
 if(ANDROID)
   add_library(CSC3002_Photo_processor SHARED
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
+      main.cpp
+      mainwindow.cpp
+      mainwindow.h
+      mainwindow.ui
+      ImageProcessor.h
+      pipeline.cpp
+      pipeline.h
+      nodebase.cpp
+      nodebase.h
+      port.cpp
+      port.h
   )
 else()
   add_executable(CSC3002_Photo_processor
@@ -40,6 +47,20 @@ else()
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
+    ImageProcessor.h
+
+    pipeline.cpp
+    pipeline.h
+    nodebase.cpp
+    nodebase.h
+    port.cpp
+    port.h
+    Nodes.cpp
+    Nodes.h
+
+    nodeconnection.cpp
+    nodeconnection.h
+
   )
 endif()
 

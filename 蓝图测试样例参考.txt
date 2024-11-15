@@ -1,0 +1,43 @@
+DoubleNode* node0;
+DoubleNode* node1;
+DoubleNode* node2;
+AddNode* node3;
+AddNode* node4;
+void MainWindow::on_pushButton_pressed()
+{
+    Pipeline::GetInstance().TestDoSth();
+
+    node0 = new DoubleNode();
+    Pipeline::GetInstance().AddNode(*node0);
+    node0->SetValue(1.5);
+
+    node1 = new DoubleNode();
+    Pipeline::GetInstance().AddNode(*node1);
+    node1->SetValue(1.5);
+
+    node2 = new DoubleNode();
+    Pipeline::GetInstance().AddNode(*node2);
+    node2->SetValue(2.4);
+
+    node3 = new AddNode();
+    Pipeline::GetInstance().AddNode(*node3);
+
+    node4 = new AddNode();
+    Pipeline::GetInstance().AddNode(*node4);
+}
+
+void MainWindow::on_pushButton_2_pressed()
+{
+    Pipeline::GetInstance().AddConnection(node1->output0,node3->input0,true);
+    Pipeline::GetInstance().AddConnection(node2->output0,node3->input1,true);
+    Pipeline::GetInstance().AddConnection(node0->output0,node4->input0,true);
+    Pipeline::GetInstance().AddConnection(node3->output0,node4->input1,true);
+//TODO:这里应该是实现递归调用自动判断执行顺序
+    node3->Execute();
+    node4->Execute();
+    std::cout << node3->output0->GetData()->toDouble() << std::endl
+              << node4->output0->GetData()->toDouble() << std::endl;
+    delete node3;
+    node4->Execute();
+    std::cout << node4->output0->GetData()->toDouble() << std::endl;
+}
