@@ -9,3 +9,4 @@ NodeBase::NodeBase()
 NodeBase::NodeBase(const NodeBase&){
 
 }
+void NodeBase::Execute(){};

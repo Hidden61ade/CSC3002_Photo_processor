@@ -5,7 +5,7 @@
 #include <list>
 #include <iostream>
 #include "Nodes.h"
-
+#include "nodeconnection.h"
 class Pipeline : public QObject
 {
     Q_OBJECT
@@ -24,6 +24,8 @@ public:
 
     void AddNode(NodeBase &node);
     void RemoveNode(NodeBase &node);
+
+    void AddConnection(void *PortA, void *PortB, bool isVariant);
 
     void Execute();
 
