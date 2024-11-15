@@ -32,6 +32,7 @@ public:
 
     Port<QVariant> *input0 = nullptr;
     Port<QVariant> *input1 = nullptr;
+    void ReqExecute(void(func0(NodeBase*))) override;
 };
 
 #endif // NODES_H

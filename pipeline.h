@@ -2,8 +2,9 @@
 #define PIPELINE_H
 
 #include <QObject>
-#include <list>
+#include <stack>
 #include <iostream>
+#include "nodebase.h"
 #include "Nodes.h"
 #include "nodeconnection.h"
 class Pipeline : public QObject
@@ -22,16 +23,14 @@ private:
 public:
     void TestDoSth();
 
-    void AddNode(NodeBase &node);
-    void RemoveNode(NodeBase &node);
-
     NodeConnection *AddConnection(void *PortA, void *PortB, bool isVariant);
 
     void Execute();
-
+    void Execute(NodeBase* arg);
+    static void StackAdd(NodeBase *node);
 
 private:
-    std::list<NodeBase> m_nodes;
+    std::stack<NodeBase*> m_nodes;
 //Signal & Slots
 signals:
     void OnNewConnectionAdded();

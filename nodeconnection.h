@@ -9,7 +9,6 @@ public:
     ~NodeConnection();
     void ConnectData();
     bool isVariant;
-private:
     void *upstream; //Dont do this
     void *downstream;
 };
