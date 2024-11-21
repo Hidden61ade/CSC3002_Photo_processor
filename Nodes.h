@@ -4,6 +4,7 @@
 
 #ifndef NODES_H
 #define NODES_H
+//Nodes for pure math
 class IntNode : public NodeBase{
 public:
     IntNode();
@@ -32,6 +33,14 @@ public:
 
     Port<QVariant> *input0 = nullptr;
     Port<QVariant> *input1 = nullptr;
+    void ReqExecute(void(func0(NodeBase*))) override;
 };
-
+//Image Related
+class ImageNode : public NodeBase{
+public:
+    ImageNode();
+    ~ImageNode();
+    void SetValue(QImage* arg);
+    Port<QImage>* output0 = nullptr;
+};
 #endif // NODES_H

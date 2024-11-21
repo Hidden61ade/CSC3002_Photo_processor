@@ -11,9 +11,16 @@
 //    Grad,
 //}ParaType;
 class NodeConnection;
+class NodeBase;
+class NodeParented{
+public:
+    virtual NodeBase* GetParent();
+protected:
+    NodeBase *parent;
+};
 
 template<typename T>
-class Port{
+class Port : public NodeParented{
 public:
     virtual void SetData(T *arg);
     virtual T *GetData();
@@ -25,10 +32,12 @@ public:
 class VariantPort : public Port<QVariant>
 {
 public:
+    VariantPort(NodeBase* parent);
     void SetData(QVariant *arg) override;
     QVariant *GetData() override;
 //    ~VariantPort();
     bool IsVariant() override;
+    NodeBase* GetParent() override;
 private:
     QVariant *data = nullptr;
 };
@@ -36,10 +45,12 @@ private:
 class ImagePort : public Port<QImage>
 {
 public:
+    ImagePort(NodeBase* parent);
     void SetData(QImage *arg) override;
     QImage *GetData() override;
 //    ~ImagePort();
     bool IsVariant() override;
+    NodeBase* GetParent() override;
 private:
     QImage *data = nullptr;
 };
