@@ -24,6 +24,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
+find_package(Qt5 COMPONENTS Core Gui Widgets Concurrent REQUIRED)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
@@ -34,6 +35,7 @@ if(ANDROID)
       mainwindow.h
       mainwindow.ui
       ImageProcessor.h
+      ImageProcessor.cpp
       pipeline.cpp
       pipeline.h
       nodebase.cpp
@@ -48,6 +50,7 @@ else()
     mainwindow.h
     mainwindow.ui
     ImageProcessor.h
+    ImageProcessor.cpp
 
     pipeline.cpp
     pipeline.h
@@ -64,4 +67,4 @@ else()
   )
 endif()
 
-target_link_libraries(CSC3002_Photo_processor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(CSC3002_Photo_processor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt5::Core Qt5::Gui Qt5::Concurrent)
