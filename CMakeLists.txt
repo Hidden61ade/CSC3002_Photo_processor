@@ -42,6 +42,8 @@ if(ANDROID)
       nodebase.h
       port.cpp
       port.h
+      lasso.cpp
+      lasso.h
   )
 else()
   add_executable(CSC3002_Photo_processor
@@ -64,6 +66,8 @@ else()
     nodeconnection.cpp
     nodeconnection.h
 
+    lasso.cpp
+    lasso.h
   )
 endif()
 
