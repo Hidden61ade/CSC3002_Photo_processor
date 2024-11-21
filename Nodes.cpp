@@ -74,3 +74,14 @@ void AddNode::ReqExecute(void(func0(NodeBase*))){
     reinterpret_cast<NodeParented*>(input1->streamConnection->upstream)->GetParent()->ReqExecute(func0);
     }
 }
+
+ImageNode::ImageNode():NodeBase(){
+    this->output0 = new ImagePort(this);
+}
+ImageNode::~ImageNode(){
+    delete this->output0->streamConnection;
+    delete this->output0;
+}
+void ImageNode::SetValue(QImage* arg){
+    this->output0->SetData(arg);
+}
