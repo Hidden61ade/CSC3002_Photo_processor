@@ -42,6 +42,9 @@ if(ANDROID)
       nodebase.h
       port.cpp
       port.h
+      imageprocessorwindow.cpp
+      imageprocessorwindow.h
+      imageprocessorwindow.ui
   )
 else()
   add_executable(CSC3002_Photo_processor
@@ -51,6 +54,9 @@ else()
     mainwindow.ui
     ImageProcessor.h
     ImageProcessor.cpp
+    imageprocessorwindow.cpp
+    imageprocessorwindow.h
+    imageprocessorwindow.ui
 
     pipeline.cpp
     pipeline.h
