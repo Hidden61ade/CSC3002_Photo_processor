@@ -1,6 +1,8 @@
 #include "Nodes.h"
 IntNode::IntNode():NodeBase(){
     this->output0 = new VariantPort(this);
+    QVariant t = 0;
+    output0->SetData(&t);
 }
 IntNode::~IntNode(){
     delete this->output0;
@@ -11,7 +13,9 @@ void IntNode::SetValue(int value){
 }
 
 DoubleNode::DoubleNode(){
-this->output0 = new VariantPort(this);
+    this->output0 = new VariantPort(this);
+    QVariant t = 0.0;
+    output0->SetData(&t);
 }
 DoubleNode::~DoubleNode(){
     delete this->output0;
@@ -84,4 +88,31 @@ ImageNode::~ImageNode(){
 }
 void ImageNode::SetValue(QImage* arg){
     this->output0->SetData(arg);
+}
+
+VariantPassNode::VariantPassNode(){
+    this->input0=new VariantPort(this);
+    this->output0=new VariantPort(this);
+}
+VariantPassNode::~VariantPassNode(){
+    delete input0->streamConnection;
+    delete output0->streamConnection;
+    delete input0;
+    delete output0;
+}
+void VariantPassNode::Execute(){
+    if(input0->streamConnection!=nullptr){
+        input0->streamConnection->ConnectData();
+    }else{
+        QVariant t = 0.0;
+        this->output0->SetData(&t);
+        return;
+    }
+    output0->SetData(input0->GetData());
+}
+void VariantPassNode::ReqExecute(void (*func0)(NodeBase *)){
+    func0(this);
+    if(input0->streamConnection!=nullptr){
+        reinterpret_cast<NodeParented*>(input0->streamConnection->upstream)->GetParent()->ReqExecute(func0);
+    }
 }
