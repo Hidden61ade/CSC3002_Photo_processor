@@ -23,6 +23,16 @@ public:
     Port<QVariant> *output0 = nullptr;
 };
 
+class VariantPassNode : public NodeBase{
+public:
+    VariantPassNode();
+    ~VariantPassNode();
+    void Execute() override;
+    void ReqExecute(void (*func0)(NodeBase *)) override;
+    Port<QVariant> *input0 = nullptr;
+    Port<QVariant> *output0 = nullptr;
+};
+
 class AddNode : public NodeBase{
 public:
     AddNode();
@@ -35,6 +45,7 @@ public:
     Port<QVariant> *input1 = nullptr;
     void ReqExecute(void(func0(NodeBase*))) override;
 };
+
 //Image Related
 class ImageNode : public NodeBase{
 public:
