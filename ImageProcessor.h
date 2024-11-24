@@ -61,7 +61,7 @@ signals:
      */
     void processingFailed(const QString &errorMessage);
 
-private:
+public:
     // 调整函数声明
     void adjustBrightness(QImage &image, int brightness);
     void adjustSaturation(QImage &image, qreal saturationFactor);
