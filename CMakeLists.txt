@@ -45,6 +45,8 @@ if(ANDROID)
       imageprocessorwindow.cpp
       imageprocessorwindow.h
       imageprocessorwindow.ui
+      lasso.cpp
+      lasso.h
   )
 else()
   add_executable(CSC3002_Photo_processor
@@ -70,6 +72,8 @@ else()
     nodeconnection.cpp
     nodeconnection.h
 
+    lasso.cpp
+    lasso.h
   )
 endif()
 
