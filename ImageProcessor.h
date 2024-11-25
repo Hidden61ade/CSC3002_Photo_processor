@@ -15,6 +15,18 @@ public:
     explicit ImageProcessor(QObject *parent = nullptr);
     ~ImageProcessor();
 
+    void adjustBrightness(QImage &image, int brightness);
+    void adjustSaturation(QImage &image, qreal factor);
+    void adjustVibrance(QImage &image, qreal factor);
+    void adjustContrast(QImage &image, qreal factor);
+    void adjustClarity(QImage &image, qreal factor);
+    void adjustHighlightsShadows(QImage &image, qreal highlightsFactor, qreal shadowsFactor);
+    void adjustTemperature(QImage &image, qreal temperature);
+    void adjustHue(QImage &image, qreal amount);
+    void featherEdges(QImage &image, int radius);
+    void addGrain(QImage &image, qreal intensity);
+    void adjustWhiteBalance(QImage &image, qreal redGain, qreal greenGain, qreal blueGain);
+
     /**
      * @brief 综合调整图像参数
      * @param image 要调整的图像
@@ -57,25 +69,14 @@ private:
         return value < min ? min : (value > max ? max : value);
     }
 
-    // 各个调整功能的私有实现
-    void adjustBrightness(QImage &image, int brightness);
-    void adjustSaturation(QImage &image, qreal factor);
-    void adjustVibrance(QImage &image, qreal factor);
-    void adjustContrast(QImage &image, qreal factor);
-    void adjustClarity(QImage &image, qreal factor);
-    void adjustHighlightsShadows(QImage &image, qreal highlightsFactor, qreal shadowsFactor);
-    void adjustTemperature(QImage &image, qreal temperature);
-    void adjustHue(QImage &image, qreal amount);
-    void featherEdges(QImage &image, int radius);
-    void addGrain(QImage &image, qreal intensity);
-    void adjustWhiteBalance(QImage &image, qreal redGain, qreal greenGain, qreal blueGain);
-
     // 颜色空间转换辅助函数
     void rgbToHsl(int r, int g, int b, qreal &h, qreal &s, qreal &l);
     void hslToRgb(qreal h, qreal s, qreal l, int &r, int &g, int &b);
     
 signals:
     void processingProgress(int percent);
+    void processingFinished(const QImage& image);
+    void processingFailed(const QString& error);
 };
 
 #endif // IMAGEPROCESSOR_H
