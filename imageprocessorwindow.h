@@ -23,6 +23,11 @@ private slots:
     void on_pushButton_2_clicked();
 
     void SetParaValue(int value);
+    void SetH(int value);
+    void SetS(int value);
+    void SetR(int value);
+    void SetG(int value);
+    void SetB(int value);
 
     void onBrightnessProc();
     void onSaturationProc();
@@ -41,6 +46,7 @@ private slots:
 
 private:
     void changeState(int i);
+    QString filename;
     Ui::ImageProcessorWindow *ui;
 };
 
