@@ -47,8 +47,6 @@ if(ANDROID)
       imageprocessorwindow.ui
       lasso.cpp
       lasso.h
-      grabcut.cpp
-      grabcut2.cpp
   )
 else()
   add_executable(CSC3002_Photo_processor
@@ -76,8 +74,6 @@ else()
 
     lasso.cpp
     lasso.h
-    grabcut.cpp
-    grabcut2.cpp
   )
 endif()
 
