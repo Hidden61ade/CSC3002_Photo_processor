@@ -35,10 +35,10 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 if(ANDROID)
   add_library(CSC3002_Photo_processor SHARED
-      main.cpp
-      mainwindow.cpp
-      mainwindow.h
-      mainwindow.ui
+#      main.cpp
+#      mainwindow.cpp
+#      mainwindow.h
+#      mainwindow.ui
       ImageProcessor.h
       ImageProcessor.cpp
       pipeline.cpp
@@ -55,13 +55,15 @@ if(ANDROID)
       grabcut.cpp
       grabcut2.cpp
       simplecut.cpp
+      simplerotate.cpp
+      mirror.cpp
   )
 else()
   add_executable(CSC3002_Photo_processor
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
+#    main.cpp
+#    mainwindow.cpp
+#    mainwindow.h
+#    mainwindow.ui
     ImageProcessor.h
     ImageProcessor.cpp
     imageprocessorwindow.cpp
@@ -82,13 +84,14 @@ else()
 
     lasso.cpp
     lasso.h
-
     grabcut.cpp
     grabcut2.cpp
-
     simplecut.cpp
+    simplerotate.cpp
+    mirror.cpp
+    watermark.cpp
   )
 endif()
 
-target_link_libraries(CSC3002_Photo_processor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt5::Core Qt5::Gui Qt5::Concurrent ${OpenCV_LIBS} )
+target_link_libraries(CSC3002_Photo_processor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt5::Core Qt5::Gui Qt5::Concurrent ${OpenCV_LIBS})
 

@@ -45,7 +45,7 @@ public:
 
 //int main()
 //{
-//    cv::Mat src = cv::imread("D:/11111.jpg");
+//    cv::Mat src = cv::imread("D:/11111s.jpg");
 //    Grabcut a;
 //    a.set_image(src);
 //    a.set_rectangle(30, 30, 500, 500);
