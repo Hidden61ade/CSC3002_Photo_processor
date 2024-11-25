@@ -1,8 +1,8 @@
-// ImageProcessor.cpp
 #include "ImageProcessor.h"
 #include <QColor>
 #include <QtConcurrent>
 #include <cmath>
+#include <QTime>
 
 ImageProcessor::ImageProcessor(QObject *parent) : QObject(parent)
 {
@@ -12,88 +12,91 @@ ImageProcessor::~ImageProcessor()
 {
 }
 
-// 综合调整函数实现
-void ImageProcessor::adjustImageParameters(QImage &image, 
-                                           int brightness, 
-                                           qreal saturationFactor, 
-                                           qreal vibranceFactor, 
-                                           qreal contrastFactor,
-                                           qreal clarityFactor,
-                                           qreal highlightsFactor,
-                                           qreal shadowsFactor,
-                                           qreal temperature,
-                                           qreal hueAmount,
-                                           int featherRadius,
-                                           qreal grainIntensity,
-                                           qreal whiteBalanceRed,
-                                           qreal whiteBalanceGreen,
-                                           qreal whiteBalanceBlue)
+void ImageProcessor::adjustImageParameters(QImage &image,
+                                        int brightness,
+                                        qreal saturationFactor,
+                                        qreal vibranceFactor,
+                                        qreal contrastFactor,
+                                        qreal clarityFactor,
+                                        qreal highlightsFactor,
+                                        qreal shadowsFactor,
+                                        qreal temperature,
+                                        qreal hueAmount,
+                                        int featherRadius,
+                                        qreal grainIntensity,
+                                        qreal whiteBalanceRed,
+                                        qreal whiteBalanceGreen,
+                                        qreal whiteBalanceBlue)
 {
-    QMutexLocker locker(&mutex); // 线程安全
+    QMutexLocker locker(&mutex);
 
     QImage processedImage = image;
+    
+    // 先处理白平衡
+    if (whiteBalanceRed != 1.0 || whiteBalanceGreen != 1.0 || whiteBalanceBlue != 1.0) {
+        adjustWhiteBalance(processedImage, whiteBalanceRed, whiteBalanceGreen, whiteBalanceBlue);
+    }
 
-    // 调整亮度
-    adjustBrightness(processedImage, brightness);
+    // 基础调整
+    if (brightness != 0) {
+        adjustBrightness(processedImage, brightness);
+    }
     
-    // 调整饱和度
-    adjustSaturation(processedImage, saturationFactor);
+    if (contrastFactor != 1.0) {
+        adjustContrast(processedImage, contrastFactor);
+    }
+
+    // 颜色调整
+    if (saturationFactor != 1.0) {
+        adjustSaturation(processedImage, saturationFactor);
+    }
     
-    // 调整鲜艳度
-    adjustVibrance(processedImage, vibranceFactor);
-    
-    // 调整对比度
-    adjustContrast(processedImage, contrastFactor);
-    
-    // 调整清晰度
-    adjustClarity(processedImage, clarityFactor);
-    
-    // 调整高光和阴影
-    adjustHighlightsShadows(processedImage, highlightsFactor, shadowsFactor);
-    
-    // 调整色温
-    adjustTemperature(processedImage, temperature);
-    
-    // 调整色调
-    adjustHue(processedImage, hueAmount);
-    
-    // 应用羽化
+    if (vibranceFactor != 1.0) {
+        adjustVibrance(processedImage, vibranceFactor);
+    }
+
+    if (clarityFactor != 0.0) {
+        adjustClarity(processedImage, clarityFactor);
+    }
+
+    if (highlightsFactor != 1.0 || shadowsFactor != 1.0) {
+        adjustHighlightsShadows(processedImage, highlightsFactor, shadowsFactor);
+    }
+
+    if (temperature != 0.0) {
+        adjustTemperature(processedImage, temperature);
+    }
+
+    if (hueAmount != 0.0) {
+        adjustHue(processedImage, hueAmount);
+    }
+
+    // 特效处理
     if (featherRadius > 0) {
         featherEdges(processedImage, featherRadius);
     }
-    
-    // 添加颗粒
+
     if (grainIntensity > 0.0) {
         addGrain(processedImage, grainIntensity);
     }
-    
-    // 调整白平衡
-    adjustWhiteBalance(processedImage, whiteBalanceRed, whiteBalanceGreen, whiteBalanceBlue);
 
-    // 更新原图
     image = processedImage;
-
-    // 发射处理完成信号
     emit processingFinished(image);
 }
 
-// 亮度调整实现
 void ImageProcessor::adjustBrightness(QImage &image, int brightness)
 {
-    if (brightness < -255 || brightness > 255) {
-        emit processingFailed("亮度值超出范围 (-255 到 +255)。");
-        return;
-    }
-
+    if (brightness == 0) return;
+    
     for(int y = 0; y < image.height(); ++y) {
         QRgb *scanLine = reinterpret_cast<QRgb*>(image.scanLine(y));
         for(int x = 0; x < image.width(); ++x) {
             QColor color(scanLine[x]);
-
-            int r = qBound(0, color.red() + brightness, 255);
-            int g = qBound(0, color.green() + brightness, 255);
-            int b = qBound(0, color.blue() + brightness, 255);
-
+            
+            int r = clamp(color.red() + brightness);
+            int g = clamp(color.green() + brightness);
+            int b = clamp(color.blue() + brightness);
+            
             scanLine[x] = qRgb(r, g, b);
         }
     }
@@ -102,6 +105,7 @@ void ImageProcessor::adjustBrightness(QImage &image, int brightness)
 // 饱和度调整实现
 void ImageProcessor::adjustSaturation(QImage &image, qreal saturationFactor)
 {
+    if (saturationFactor == 1.0) return;
     if (saturationFactor < 0.0 || saturationFactor > 2.0) {
         emit processingFailed("饱和度因子超出范围 (0.0 到 2.0)。");
         return;
@@ -111,16 +115,13 @@ void ImageProcessor::adjustSaturation(QImage &image, qreal saturationFactor)
         QRgb *scanLine = reinterpret_cast<QRgb*>(image.scanLine(y));
         for(int x = 0; x < image.width(); ++x) {
             QColor color(scanLine[x]);
-
-            qreal h, s, v;
-            color.getHsvF(&h, &s, &v);
-
-            s *= saturationFactor;
-            s = qBound(0.0, s, 1.0);
-
+            qreal h, s, l;
+            color.getHslF(&h, &s, &l);
+            
+            s = qBound(0.0, s * saturationFactor, 1.0);
+            
             QColor newColor;
-            newColor.setHsvF(h, s, v);
-
+            newColor.setHslF(h, s, l);
             scanLine[x] = newColor.rgb();
         }
     }
@@ -129,6 +130,7 @@ void ImageProcessor::adjustSaturation(QImage &image, qreal saturationFactor)
 // 鲜艳度调整实现
 void ImageProcessor::adjustVibrance(QImage &image, qreal vibranceFactor)
 {
+    if (vibranceFactor == 1.0) return;
     if (vibranceFactor < 0.0 || vibranceFactor > 2.0) {
         emit processingFailed("鲜艳度因子超出范围 (0.0 到 2.0)。");
         return;
@@ -138,19 +140,23 @@ void ImageProcessor::adjustVibrance(QImage &image, qreal vibranceFactor)
         QRgb *scanLine = reinterpret_cast<QRgb*>(image.scanLine(y));
         for(int x = 0; x < image.width(); ++x) {
             QColor color(scanLine[x]);
-
-            qreal h, s, v;
-            color.getHsvF(&h, &s, &v);
-
-            if(s < 0.5) {
-                s += vibranceFactor * (0.5 - s);
-                s = qBound(0.0, s, 1.0);
-            }
-
-            QColor newColor;
-            newColor.setHsvF(h, s, v);
-
-            scanLine[x] = newColor.rgb();
+            int r = color.red();
+            int g = color.green();
+            int b = color.blue();
+            
+            // 计算饱和度
+            int maxChannel = qMax(qMax(r, g), b);
+            int minChannel = qMin(qMin(r, g), b);
+            qreal sat = maxChannel == 0 ? 0 : (maxChannel - minChannel) / qreal(maxChannel);
+            
+            // 仅增强低饱和度的颜色
+            qreal factor = 1.0 + (1.0 - sat) * (vibranceFactor - 1.0);
+            
+            r = clamp(qRound(r * factor));
+            g = clamp(qRound(g * factor));
+            b = clamp(qRound(b * factor));
+            
+            scanLine[x] = qRgb(r, g, b);
         }
     }
 }
@@ -158,77 +164,105 @@ void ImageProcessor::adjustVibrance(QImage &image, qreal vibranceFactor)
 // 对比度调整实现
 void ImageProcessor::adjustContrast(QImage &image, qreal contrastFactor)
 {
+    if (contrastFactor == 1.0) return;
     if (contrastFactor < 0.5 || contrastFactor > 3.0) {
         emit processingFailed("对比度因子超出范围 (0.5 到 3.0)。");
         return;
     }
 
+    // 计算平均亮度作为对比度调整的中心点
+    qreal avgLuma = 0;
     for(int y = 0; y < image.height(); ++y) {
         QRgb *scanLine = reinterpret_cast<QRgb*>(image.scanLine(y));
         for(int x = 0; x < image.width(); ++x) {
             QColor color(scanLine[x]);
+            avgLuma += 0.299 * color.red() + 0.587 * color.green() + 0.114 * color.blue();
+        }
+    }
+    avgLuma /= (image.width() * image.height());
 
-            int r = qBound(0, static_cast<int>((color.redF() - 0.5) * contrastFactor + 0.5), 1);
-            int g = qBound(0, static_cast<int>((color.greenF() - 0.5) * contrastFactor + 0.5), 1);
-            int b = qBound(0, static_cast<int>((color.blueF() - 0.5) * contrastFactor + 0.5), 1);
-
-            scanLine[x] = qRgb(r * 255, g * 255, b * 255);
+    for(int y = 0; y < image.height(); ++y) {
+        QRgb *scanLine = reinterpret_cast<QRgb*>(image.scanLine(y));
+        for(int x = 0; x < image.width(); ++x) {
+            QColor color(scanLine[x]);
+            
+            qreal r = color.red() - avgLuma;
+            qreal g = color.green() - avgLuma;
+            qreal b = color.blue() - avgLuma;
+            
+            r = (r * contrastFactor) + avgLuma;
+            g = (g * contrastFactor) + avgLuma;
+            b = (b * contrastFactor) + avgLuma;
+            
+            scanLine[x] = qRgb(clamp(qRound(r)), 
+                              clamp(qRound(g)), 
+                              clamp(qRound(b)));
         }
     }
 }
 
-// 清晰度调整实现
+// 清晰度调整实现 
 void ImageProcessor::adjustClarity(QImage &image, qreal clarityFactor)
 {
+    if (clarityFactor == 0.0) return;
     if (clarityFactor < -100.0 || clarityFactor > 100.0) {
         emit processingFailed("清晰度因子超出范围 (-100.0 到 +100.0)。");
         return;
     }
 
-    // 简单实现，功能更复杂建议使用OpenCV等库
-    // 这里只做简单的锐化或模糊处理
-    // 反锐化掩蔽（未实现高效算法）
-
-    // 复制原图
+    // 创建高斯模糊图像
     QImage blurred = image;
-    blurred = image.copy();
+    int radius = 3;
+    qreal sigma = 1.0;
 
-    // 简单均值模糊
-    QImage temp = image.copy();
-    for(int y = 1; y < image.height()-1; ++y) {
-        for(int x = 1; x < image.width()-1; ++x) {
-            QColor sum(0, 0, 0);
-            for(int ky = -1; ky <=1; ++ky) {
-                for(int kx = -1; kx <=1; ++kx) {
-                    QColor pixel(temp.pixel(x + kx, y + ky));
-                    sum.setRed(sum.red() + pixel.red());
-                    sum.setGreen(sum.green() + pixel.green());
-                    sum.setBlue(sum.blue() + pixel.blue());
+    // 高斯模糊
+    for(int y = radius; y < image.height()-radius; ++y) {
+        for(int x = radius; x < image.width()-radius; ++x) {
+            qreal sumR = 0, sumG = 0, sumB = 0, sumWeight = 0;
+            
+            for(int ky = -radius; ky <= radius; ++ky) {
+                for(int kx = -radius; kx <= radius; ++kx) {
+                    QColor pixel(image.pixel(x + kx, y + ky));
+                    qreal weight = exp(-(kx*kx + ky*ky)/(2*sigma*sigma));
+                    
+                    sumR += pixel.red() * weight;
+                    sumG += pixel.green() * weight;
+                    sumB += pixel.blue() * weight;
+                    sumWeight += weight;
                 }
             }
-            sum.setRed(sum.red() / 9);
-            sum.setGreen(sum.green() / 9);
-            sum.setBlue(sum.blue() / 9);
-            blurred.setPixel(x, y, sum.rgb());
+            
+            blurred.setPixel(x, y, qRgb(
+                clamp(qRound(sumR/sumWeight)),
+                clamp(qRound(sumG/sumWeight)),
+                clamp(qRound(sumB/sumWeight))
+            ));
         }
     }
 
-    // 反锐化掩蔽
+    // 混合原图和模糊图
+    qreal amount = clarityFactor / 100.0;
     for(int y = 0; y < image.height(); ++y) {
-        QRgb *scanOrig = reinterpret_cast<QRgb*>(image.scanLine(y));
-        QRgb *scanBlur = reinterpret_cast<QRgb*>(blurred.scanLine(y));
+        QRgb *origLine = reinterpret_cast<QRgb*>(image.scanLine(y));
+        QRgb *blurLine = reinterpret_cast<QRgb*>(blurred.scanLine(y));
         for(int x = 0; x < image.width(); ++x) {
-            QColor orig(scanOrig[x]);
-            QColor blur(scanBlur[x]);
-
-            int r = qBound(0, static_cast<int>((orig.red() - blur.red()) * clarityFactor / 100.0 + orig.red()), 255);
-            int g = qBound(0, static_cast<int>((orig.green() - blur.green()) * clarityFactor / 100.0 + orig.green()), 255);
-            int b = qBound(0, static_cast<int>((orig.blue() - blur.blue()) * clarityFactor / 100.0 + orig.blue()), 255);
-
-            scanOrig[x] = qRgb(r, g, b);
+            QColor orig(origLine[x]);
+            QColor blur(blurLine[x]);
+            
+            int r = clamp(orig.red() + (orig.red() - blur.red()) * amount);
+            int g = clamp(orig.green() + (orig.green() - blur.green()) * amount);
+            int b = clamp(orig.blue() + (orig.blue() - blur.blue()) * amount);
+            
+            origLine[x] = qRgb(r, g, b);
         }
     }
 }
+
+// 其他函数的修改原则类似:
+// 1. 添加提前返回检查
+// 2. 确保参数在有效范围内
+// 3. 使用clamp函数限制像素值
+// 4. 优化处理逻辑和性能
 
 // 高光和阴影调整实现
 void ImageProcessor::adjustHighlightsShadows(QImage &image, qreal highlightsFactor, qreal shadowsFactor)
@@ -265,6 +299,7 @@ void ImageProcessor::adjustHighlightsShadows(QImage &image, qreal highlightsFact
 // 色温调整实现
 void ImageProcessor::adjustTemperature(QImage &image, qreal temperature)
 {
+    if (temperature == 0.0) return;
     if (temperature < -100.0 || temperature > 100.0) {
         emit processingFailed("色温值超出范围 (-100.0 到 +100.0)。");
         return;
@@ -276,12 +311,12 @@ void ImageProcessor::adjustTemperature(QImage &image, qreal temperature)
     if (temperature > 0.0) {
         redGain += temperature / 100.0;
         blueGain -= temperature / 100.0;
-    }
-    else {
-        redGain += temperature / 100.0; // temperature 是负数
+    } else {
+        redGain += temperature / 100.0;
         blueGain -= temperature / 100.0;
     }
 
+    // 限制增益范围
     redGain = qBound(0.5, redGain, 2.0);
     blueGain = qBound(0.5, blueGain, 2.0);
 
@@ -289,11 +324,9 @@ void ImageProcessor::adjustTemperature(QImage &image, qreal temperature)
         QRgb *scanLine = reinterpret_cast<QRgb*>(image.scanLine(y));
         for(int x = 0; x < image.width(); ++x) {
             QColor color(scanLine[x]);
-
-            int r = qBound(0, static_cast<int>(color.red() * redGain), 255);
-            int g = color.green(); // 绿色通道不变
-            int b = qBound(0, static_cast<int>(color.blue() * blueGain), 255);
-
+            int r = clamp(qRound(color.red() * redGain));
+            int g = color.green();
+            int b = clamp(qRound(color.blue() * blueGain));
             scanLine[x] = qRgb(r, g, b);
         }
     }
@@ -302,77 +335,95 @@ void ImageProcessor::adjustTemperature(QImage &image, qreal temperature)
 // 色调调整实现
 void ImageProcessor::adjustHue(QImage &image, qreal hueAmount)
 {
+    if (hueAmount == 0.0) return;
     if (hueAmount < -180.0 || hueAmount > 180.0) {
         emit processingFailed("色调旋转量超出范围 (-180.0 到 +180.0)。");
         return;
     }
 
+    qreal hueShift = hueAmount / 360.0; // 转换为0-1范围
+
     for(int y = 0; y < image.height(); ++y) {
         QRgb *scanLine = reinterpret_cast<QRgb*>(image.scanLine(y));
         for(int x = 0; x < image.width(); ++x) {
             QColor color(scanLine[x]);
-
-            qreal h, s, v;
-            color.getHsvF(&h, &s, &v);
-
-            h += hueAmount / 360.0; // 将度转换为 [0,1] 范围
+            qreal h, s, l;
+            color.getHslF(&h, &s, &l);
+            
+            h += hueShift;
             while (h > 1.0) h -= 1.0;
             while (h < 0.0) h += 1.0;
-
+            
             QColor newColor;
-            newColor.setHsvF(h, s, v);
+            newColor.setHslF(h, s, l);
             scanLine[x] = newColor.rgb();
         }
     }
 }
 
-// 羽化实现（简单均值模糊）
-void ImageProcessor::featherEdges(QImage &image, int featherRadius)
+// 羽化实现
+void ImageProcessor::featherEdges(QImage &image, int radius)
 {
-    if (featherRadius <= 0) return;
+    if (radius <= 0 || radius > 50) {
+        emit processingFailed("羽化半径超出范围 (1 到 50)。");
+        return;
+    }
 
-    // 复制图像
-    QImage blurred = image.copy();
-
-    // 简单均值模糊
-    for(int y = featherRadius; y < image.height() - featherRadius; ++y) {
-        for(int x = featherRadius; x < image.width() - featherRadius; ++x) {
-            QColor sum(0, 0, 0);
+    QImage original = image;
+    
+    for(int y = 0; y < image.height(); ++y) {
+        for(int x = 0; x < image.width(); ++x) {
+            int r = 0, g = 0, b = 0;
             int count = 0;
-            for(int ky = -featherRadius; ky <= featherRadius; ++ky) {
-                for(int kx = -featherRadius; kx <= featherRadius; ++kx) {
-                    QColor pixel(image.pixel(x + kx, y + ky));
-                    sum.setRed(sum.red() + pixel.red());
-                    sum.setGreen(sum.green() + pixel.green());
-                    sum.setBlue(sum.blue() + pixel.blue());
+            
+            for(int dy = -radius; dy <= radius; ++dy) {
+                int ny = y + dy;
+                if(ny < 0 || ny >= image.height()) continue;
+                
+                for(int dx = -radius; dx <= radius; ++dx) {
+                    int nx = x + dx;
+                    if(nx < 0 || nx >= image.width()) continue;
+                    
+                    QColor color(original.pixel(nx, ny));
+                    r += color.red();
+                    g += color.green();
+                    b += color.blue();
                     count++;
                 }
             }
-            sum.setRed(sum.red() / count);
-            sum.setGreen(sum.green() / count);
-            sum.setBlue(sum.blue() / count);
-            blurred.setPixel(x, y, sum.rgb());
+            
+            image.setPixel(x, y, qRgb(
+                clamp(r / count),
+                clamp(g / count),
+                clamp(b / count)
+            ));
         }
     }
-
-    // 替换原图
-    image = blurred;
 }
 
-// 添加颗粒实现（灰度颗粒）
-void ImageProcessor::addGrain(QImage &image, qreal grainIntensity)
+// 添加颗粒效果实现
+void ImageProcessor::addGrain(QImage &image, qreal intensity)
 {
-    if (grainIntensity <= 0.0) return;
+    if (intensity <= 0.0 || intensity > 1.0) {
+        emit processingFailed("颗粒强度超出范围 (0.0 到 1.0)。");
+        return;
+    }
 
-    qsrand(static_cast<uint>(QTime::currentTime().msec()));
+    QRandomGenerator random(QTime::currentTime().msecsSinceStartOfDay());
+    
     for(int y = 0; y < image.height(); ++y) {
         QRgb *scanLine = reinterpret_cast<QRgb*>(image.scanLine(y));
         for(int x = 0; x < image.width(); ++x) {
-            qreal randVal = static_cast<qreal>(qrand()) / RAND_MAX;
-            if(randVal < grainIntensity) {
-                int noise = qrand() % 256;
-                scanLine[x] = qRgb(noise, noise, noise);
-            }
+            QColor color(scanLine[x]);
+            
+            // 生成随机噪声
+            qreal noise = (random.generateDouble() - 0.5) * 2.0 * intensity * 255;
+            
+            int r = clamp(color.red() + qRound(noise));
+            int g = clamp(color.green() + qRound(noise));
+            int b = clamp(color.blue() + qRound(noise));
+            
+            scanLine[x] = qRgb(r, g, b);
         }
     }
 }
@@ -380,6 +431,7 @@ void ImageProcessor::addGrain(QImage &image, qreal grainIntensity)
 // 白平衡调整实现
 void ImageProcessor::adjustWhiteBalance(QImage &image, qreal redGain, qreal greenGain, qreal blueGain)
 {
+    if (redGain == 1.0 && greenGain == 1.0 && blueGain == 1.0) return;
     if (redGain < 0.5 || redGain > 2.0 ||
         greenGain < 0.5 || greenGain > 2.0 ||
         blueGain < 0.5 || blueGain > 2.0) {
@@ -391,11 +443,11 @@ void ImageProcessor::adjustWhiteBalance(QImage &image, qreal redGain, qreal gree
         QRgb *scanLine = reinterpret_cast<QRgb*>(image.scanLine(y));
         for(int x = 0; x < image.width(); ++x) {
             QColor color(scanLine[x]);
-
-            int r = qBound(0, static_cast<int>(color.red() * redGain), 255);
-            int g = qBound(0, static_cast<int>(color.green() * greenGain), 255);
-            int b = qBound(0, static_cast<int>(color.blue() * blueGain), 255);
-
+            
+            int r = clamp(qRound(color.red() * redGain));
+            int g = clamp(qRound(color.green() * greenGain));
+            int b = clamp(qRound(color.blue() * blueGain));
+            
             scanLine[x] = qRgb(r, g, b);
         }
     }

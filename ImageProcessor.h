@@ -10,6 +10,7 @@
 class ImageProcessor : public QObject
 {
     Q_OBJECT
+
 public:
     explicit ImageProcessor(QObject *parent = nullptr);
     ~ImageProcessor();
@@ -33,50 +34,48 @@ public:
      * @param whiteBalanceBlue 白平衡蓝增益 (0.5 到 2.0)
      */
     void adjustImageParameters(QImage &image,
-                               int brightness,
-                               qreal saturationFactor,
-                               qreal vibranceFactor,
-                               qreal contrastFactor,
-                               qreal clarityFactor,
-                               qreal highlightsFactor,
-                               qreal shadowsFactor,
-                               qreal temperature,
-                               qreal hueAmount,
-                               int featherRadius,
-                               qreal grainIntensity,
-                               qreal whiteBalanceRed,
-                               qreal whiteBalanceGreen,
-                               qreal whiteBalanceBlue);
+                             int brightness,
+                             qreal saturationFactor,
+                             qreal vibranceFactor,
+                             qreal contrastFactor,
+                             qreal clarityFactor,
+                             qreal highlightsFactor,
+                             qreal shadowsFactor,
+                             qreal temperature,
+                             qreal hueAmount,
+                             int featherRadius,
+                             qreal grainIntensity,
+                             qreal whiteBalanceRed,
+                             qreal whiteBalanceGreen,
+                             qreal whiteBalanceBlue);
 
-signals:
-    /**
-     * @brief 图像处理完成
-     * @param processedImage 处理后的图像
-     */
-    void processingFinished(const QImage &processedImage);
+private:
+    QMutex mutex;
+    
+    // 辅助函数
+    static inline int clamp(int value, int min = 0, int max = 255) {
+        return value < min ? min : (value > max ? max : value);
+    }
 
-    /**
-     * @brief 图像处理失败
-     * @param errorMessage 错误信息
-     */
-    void processingFailed(const QString &errorMessage);
-
-public:
-    // 调整函数声明
+    // 各个调整功能的私有实现
     void adjustBrightness(QImage &image, int brightness);
-    void adjustSaturation(QImage &image, qreal saturationFactor);
-    void adjustVibrance(QImage &image, qreal vibranceFactor);
-    void adjustContrast(QImage &image, qreal contrastFactor);
-    void adjustClarity(QImage &image, qreal clarityFactor);
+    void adjustSaturation(QImage &image, qreal factor);
+    void adjustVibrance(QImage &image, qreal factor);
+    void adjustContrast(QImage &image, qreal factor);
+    void adjustClarity(QImage &image, qreal factor);
     void adjustHighlightsShadows(QImage &image, qreal highlightsFactor, qreal shadowsFactor);
     void adjustTemperature(QImage &image, qreal temperature);
-    void adjustHue(QImage &image, qreal hueAmount);
-    void featherEdges(QImage &image, int featherRadius);
-    void addGrain(QImage &image, qreal grainIntensity);
+    void adjustHue(QImage &image, qreal amount);
+    void featherEdges(QImage &image, int radius);
+    void addGrain(QImage &image, qreal intensity);
     void adjustWhiteBalance(QImage &image, qreal redGain, qreal greenGain, qreal blueGain);
 
-    // 线程安全
-    QMutex mutex;
+    // 颜色空间转换辅助函数
+    void rgbToHsl(int r, int g, int b, qreal &h, qreal &s, qreal &l);
+    void hslToRgb(qreal h, qreal s, qreal l, int &r, int &g, int &b);
+    
+signals:
+    void processingProgress(int percent);
 };
 
 #endif // IMAGEPROCESSOR_H
