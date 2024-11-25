@@ -28,6 +28,11 @@ find_package(Qt5 COMPONENTS Core Gui Widgets Concurrent REQUIRED)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
+set(OpenCV_DIR C:/opencv/opencv-build)
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+
 if(ANDROID)
   add_library(CSC3002_Photo_processor SHARED
       main.cpp
@@ -47,6 +52,9 @@ if(ANDROID)
       imageprocessorwindow.ui
       lasso.cpp
       lasso.h
+      grabcut.cpp
+      grabcut2.cpp
+      simplecut.cpp
   )
 else()
   add_executable(CSC3002_Photo_processor
@@ -74,7 +82,13 @@ else()
 
     lasso.cpp
     lasso.h
+
+    grabcut.cpp
+    grabcut2.cpp
+
+    simplecut.cpp
   )
 endif()
 
-target_link_libraries(CSC3002_Photo_processor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt5::Core Qt5::Gui Qt5::Concurrent)
+target_link_libraries(CSC3002_Photo_processor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt5::Core Qt5::Gui Qt5::Concurrent ${OpenCV_LIBS} )
+
