@@ -34,25 +34,25 @@ public:
 
 };
 
-int main() {
-    // 创建 Grabcut 对象
-    Grab_simple_change grabchange;
-    // 加载原始图像
-    Mat image = imread("D:/11111.jpg");
-    cv::namedWindow("");
-    cv::imshow("",image);
-    // 检查图像是否加载成功
-    if (image.empty()) {
-        cout << "Failed to load image!" << endl;
-        return -1;
-    }
+//int main() {
+//    // 创建 Grabcut 对象
+//    Grab_simple_change grabchange;
+//    // 加载原始图像
+//    Mat image = imread("D:/11111.jpg");
+//    cv::namedWindow("");
+//    cv::imshow("",image);
+//    // 检查图像是否加载成功
+//    if (image.empty()) {
+//        cout << "Failed to load image!" << endl;
+//        return -1;
+//    }
 
-    grabchange.set_image(image);
-    string watermark = "Sample Watermark";
-    Point position(100, 100);  // 水印位置
-    grabchange.add_watermark(watermark, position, FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 0, 255), 2); // 红色水印，粗细为2
+//    grabchange.set_image(image);
+//    string watermark = "Sample Watermark";
+//    Point position(100, 100);  // 水印位置
+//    grabchange.add_watermark(watermark, position, FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 0, 255), 2); // 红色水印，粗细为2
 
 
-    cv::waitKey();
-    return 0;
-};
+//    cv::waitKey();
+//    return 0;
+//};
