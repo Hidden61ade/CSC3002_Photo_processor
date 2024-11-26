@@ -22,3 +22,10 @@ void MainWindow::on_ImageProcessorButton_clicked()
     ImageProcessorWindow *I=new ImageProcessorWindow();
     I->show();
 }
+
+void MainWindow::on_grabCutButton_clicked()
+{
+    this->hide();
+    GrabCutWindow * G=new GrabCutWindow();
+    G->show();
+}

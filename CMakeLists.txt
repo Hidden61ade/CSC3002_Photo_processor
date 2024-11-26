@@ -54,6 +54,9 @@ if(ANDROID)
       lasso.h
       grabcut.cpp
       grabcut2.cpp
+      grabcutwindow.cpp
+      grabcutwindow.h
+      grabcutwindow.ui
   )
 else()
   add_executable(CSC3002_Photo_processor
@@ -84,6 +87,10 @@ else()
 
     grabcut.cpp
     grabcut2.cpp
+
+    grabcutwindow.cpp
+    grabcutwindow.h
+    grabcutwindow.ui
   )
 endif()
 

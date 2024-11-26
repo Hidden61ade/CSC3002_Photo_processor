@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "imageprocessorwindow.h"
+#include "grabcutwindow.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -17,6 +18,8 @@ public:
 
 private slots:
     void on_ImageProcessorButton_clicked();
+
+    void on_grabCutButton_clicked();
 
 private:
     Ui::MainWindow *ui;
