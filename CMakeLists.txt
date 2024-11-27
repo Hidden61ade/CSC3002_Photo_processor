@@ -27,10 +27,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Core Gui Widgets Concurrent REQUIRED)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-
-set(OpenCV_DIR C:/Users/Lenovo/Downloads/opencv/opencv-build)
+#set(OpenCV_DIR C:/Users/Lenovo/Downloads/opencv/opencv-build)
+set(OpenCV_DIR C:/opencv/opencv-build)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+
 
 
 if(ANDROID)
@@ -53,10 +54,21 @@ if(ANDROID)
       lasso.cpp
       lasso.h
       grabcut.cpp
+      grabcut.h
+      grabcut2.h
       grabcut2.cpp
       grabcutwindow.cpp
       grabcutwindow.h
       grabcutwindow.ui
+
+      simplecut.h
+      simplecut.cpp
+      simplerotate.h
+      simplerotate.cpp
+      mirror.h
+      mirror.cpp
+      watermark.h
+      watermark.cpp
   )
 else()
   add_executable(CSC3002_Photo_processor
@@ -85,12 +97,23 @@ else()
     lasso.cpp
     lasso.h
 
+    grabcut.h
+    grabcut2.h
     grabcut.cpp
     grabcut2.cpp
 
     grabcutwindow.cpp
     grabcutwindow.h
     grabcutwindow.ui
+
+    simplecut.h
+    simplecut.cpp
+    simplerotate.h
+    simplerotate.cpp
+    mirror.h
+    mirror.cpp
+    watermark.h
+    watermark.cpp
   )
 endif()
 
