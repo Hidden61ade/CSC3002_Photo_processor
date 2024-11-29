@@ -1,102 +1,73 @@
-#include "lasso.h"
+#include <opencv2/opencv.hpp>
 #include <iostream>
-#include <cmath>
-#include <cassert>
 
-Lasso::Lasso(double lambda) : lambda_(lambda) {}
 
-void Lasso::fit(const std::vector<std::vector<double>>& X, const std::vector<double>& y) {
-    assert(X.size() == y.size());  // 确保特征矩阵和目标值大小一致
+using namespace std;
 
-    // 规范化数据
-    std::vector<std::vector<double>> X_normalized = X;
-    normalize(X_normalized);
 
-    // 初始化回归系数为0
-    coefficients_ = std::vector<double>(X_normalized[0].size(), 0);
+cv::Mat image, originalImage; // 原始图像和用于显示的图像
+std::vector<cv::Point> points;
 
-    // 执行坐标下降算法
-    coordinateDescent(X_normalized, y);
-}
+bool isDrawing = false;
 
-std::vector<double> Lasso::predict(const std::vector<std::vector<double>>& X) const {
-    std::vector<double> predictions;
-    for (const auto& row : X) {
-        double prediction = 0;
-        for (size_t i = 0; i < coefficients_.size(); ++i) {
-            prediction += coefficients_[i] * row[i];
-        }
-        predictions.push_back(prediction);
-    }
-    return predictions;
-}
-
-const std::vector<double>& Lasso::getCoefficients() const {
-    return coefficients_;
-}
-
-void Lasso::coordinateDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y) {
-    // 设置一个学习率（步长）
-    double alpha = 0.01;
-    // 迭代次数
-    size_t maxIter = 1000;
-    size_t n = X.size();
-    size_t m = X[0].size();
-
-    // 执行坐标下降
-    for (size_t iter = 0; iter < maxIter; ++iter) {
-        for (size_t j = 0; j < m; ++j) {
-            double gradient = computeGradient(X, y, j);
-            // 使用坐标下降更新回归系数
-            if (gradient > lambda_) {
-                coefficients_[j] = (gradient - lambda_);
-            } else if (gradient < -lambda_) {
-                coefficients_[j] = (gradient + lambda_);
-            } else {
-                coefficients_[j] = 0;
+// 鼠标回调函数
+void mouseCallback(int event, int x, int y, int flags, void* userdata) {
+    switch (event) {
+        case cv::EVENT_LBUTTONDOWN:
+            points.clear(); // 清空点集
+            points.push_back(cv::Point(x, y));
+            isDrawing = true;
+            break;
+        case cv::EVENT_MOUSEMOVE:
+            if (isDrawing) {
+                // 在用于显示的图像上绘制红线
+                cv::line(originalImage, points.back(), cv::Point(x, y), cv::Scalar(0, 0, 255), 2, cv::LINE_AA);
+                points.push_back(cv::Point(x, y));
+                cv::imshow("Image", originalImage);
             }
-        }
+            break;
+        case cv::EVENT_LBUTTONUP:
+            if (isDrawing) {
+                // 自动首尾连接
+                cv::line(originalImage, points.back(), points.front(), cv::Scalar(0, 0, 255), 2, cv::LINE_AA);
+                points.push_back(points.front()); // 确保路径闭合
+
+                // 创建掩模并绘制轮廓
+                cv::Mat mask = cv::Mat::zeros(originalImage.size(), CV_8UC1);
+                cv::drawContours(mask, std::vector<std::vector<cv::Point>>{points}, -1, cv::Scalar(255), cv::FILLED);
+
+                // 使用掩模提取轮廓内的图像
+                cv::Mat result;
+                cv::bitwise_and(image, image, result, mask);
+
+                // 创建新窗口显示截取的部分
+                cv::imshow("Cropped", result);
+                cv::imwrite("cropped_image.jpg", result);
+
+                // 重置用于显示的图像和点集以绘制新的轮廓
+                originalImage = image.clone();
+                points.clear();
+                isDrawing = false;
+            }
+            break;
     }
 }
 
-double Lasso::computeGradient(const std::vector<std::vector<double>>& X, const std::vector<double>& y, int j) const {
-    double gradient = 0.0;
-    size_t n = X.size();
-    for (size_t i = 0; i < n; ++i) {
-        double error = 0;
-        for (size_t k = 0; k < X[i].size(); ++k) {
-            error += X[i][k] * coefficients_[k];
-        }
-        error -= y[i];
-        gradient += error * X[i][j];
+int main() {
+    image = cv::imread("D:/11111.jpg"); // 用户可以替换为你的图片路径
+    if (image.empty()) {
+        std::cout << "Could not open or find the image!" << std::endl;
+        return -1;
     }
-    return gradient / n;
-}
 
-void Lasso::normalize(std::vector<std::vector<double>>& X) const {
-    size_t n = X.size();
-    size_t m = X[0].size();
+    // 复制图像以用于显示
+    originalImage = image.clone();
 
-    // 对每列进行标准化
-    for (size_t j = 0; j < m; ++j) {
-        double mean = 0;
-        double stddev = 0;
+    // 创建窗口
+    cv::namedWindow("Image", 1);
+    cv::setMouseCallback("Image", mouseCallback);
+    cv::imshow("Image", originalImage);
+    cv::waitKey(0);
 
-        // 计算均值
-        for (size_t i = 0; i < n; ++i) {
-            mean += X[i][j];
-        }
-        mean /= n;
-
-        // 计算标准差
-        for (size_t i = 0; i < n; ++i) {
-            stddev += (X[i][j] - mean) * (X[i][j] - mean);
-        }
-        stddev = std::sqrt(stddev / n);
-
-        // 对列进行标准化
-        for (size_t i = 0; i < n; ++i) {
-            X[i][j] = (X[i][j] - mean) / stddev;
-        }
-    }
+    return 0;
 }
