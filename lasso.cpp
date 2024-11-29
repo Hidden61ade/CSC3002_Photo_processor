@@ -53,21 +53,21 @@ void mouseCallback(int event, int x, int y, int flags, void* userdata) {
     }
 }
 
-int main() {
-    image = cv::imread("D:/11111.jpg"); // 用户可以替换为你的图片路径
-    if (image.empty()) {
-        std::cout << "Could not open or find the image!" << std::endl;
-        return -1;
-    }
+//int main() {
+//    image = cv::imread("D:/11111.jpg"); // 用户可以替换为你的图片路径
+//    if (image.empty()) {
+//        std::cout << "Could not open or find the image!" << std::endl;
+//        return -1;
+//    }
 
-    // 复制图像以用于显示
-    originalImage = image.clone();
+//    // 复制图像以用于显示
+//    originalImage = image.clone();
 
-    // 创建窗口
-    cv::namedWindow("Image", 1);
-    cv::setMouseCallback("Image", mouseCallback);
-    cv::imshow("Image", originalImage);
-    cv::waitKey(0);
+//    // 创建窗口
+//    cv::namedWindow("Image", 1);
+//    cv::setMouseCallback("Image", mouseCallback);
+//    cv::imshow("Image", originalImage);
+//    cv::waitKey(0);
 
-    return 0;
-}
+//    return 0;
+//}
