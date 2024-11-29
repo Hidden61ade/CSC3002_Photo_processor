@@ -5,12 +5,12 @@
 using namespace std;
 
 
-cv::Mat image, originalImage; // 原始图像和用于显示的图像
+cv::Mat image, originalImage;
 std::vector<cv::Point> points;
 
 bool isDrawing = false;
 
-// 鼠标回调函数
+
 void mouseCallback(int event, int x, int y, int flags, void* userdata) {
     switch (event) {
         case cv::EVENT_LBUTTONDOWN:
@@ -20,7 +20,6 @@ void mouseCallback(int event, int x, int y, int flags, void* userdata) {
             break;
         case cv::EVENT_MOUSEMOVE:
             if (isDrawing) {
-                // 在用于显示的图像上绘制红线
                 cv::line(originalImage, points.back(), cv::Point(x, y), cv::Scalar(0, 0, 255), 2, cv::LINE_AA);
                 points.push_back(cv::Point(x, y));
                 cv::imshow("Image", originalImage);
@@ -31,12 +30,8 @@ void mouseCallback(int event, int x, int y, int flags, void* userdata) {
                 // 自动首尾连接
                 cv::line(originalImage, points.back(), points.front(), cv::Scalar(0, 0, 255), 2, cv::LINE_AA);
                 points.push_back(points.front()); // 确保路径闭合
-
-                // 创建掩模并绘制轮廓
                 cv::Mat mask = cv::Mat::zeros(originalImage.size(), CV_8UC1);
-                cv::drawContours(mask, std::vector<std::vector<cv::Point>>{points}, -1, cv::Scalar(255), cv::FILLED);
-
-                // 使用掩模提取轮廓内的图像
+                cv::drawContours(mask, std::vector<std::vector<cv::Point>>{points}, -1, cv::Scalar(255), cv::FILLED);      
                 cv::Mat result;
                 cv::bitwise_and(image, image, result, mask);
 
@@ -60,10 +55,8 @@ void mouseCallback(int event, int x, int y, int flags, void* userdata) {
 //        return -1;
 //    }
 
-//    // 复制图像以用于显示
 //    originalImage = image.clone();
 
-//    // 创建窗口
 //    cv::namedWindow("Image", 1);
 //    cv::setMouseCallback("Image", mouseCallback);
 //    cv::imshow("Image", originalImage);
