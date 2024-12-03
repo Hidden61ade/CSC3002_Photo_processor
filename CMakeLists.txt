@@ -27,8 +27,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Core Gui Widgets Concurrent REQUIRED)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-#set(OpenCV_DIR C:/Users/Lenovo/Downloads/opencv/opencv-build)
-set(OpenCV_DIR C:/opencv/opencv-build)
+set(OpenCV_DIR C:/Users/Lenovo/Downloads/opencv/opencv-build)
+#set(OpenCV_DIR C:/opencv/opencv-build)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
@@ -114,6 +114,13 @@ else()
     mirror.cpp
     watermark.h
     watermark.cpp
+
+    testwindow.cpp
+    testwindow.h
+    testwindow.ui
+
+    agvview.cpp
+    agvview.h
   )
 endif()
 
