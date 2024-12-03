@@ -23,6 +23,7 @@ GrabCutWindow::GrabCutWindow(QWidget *parent) :
 GrabCutWindow::~GrabCutWindow()
 {
     delete ui;
+    delete pixmapItem;
 }
 
 void GrabCutWindow::on_loadButton_clicked()
@@ -30,7 +31,7 @@ void GrabCutWindow::on_loadButton_clicked()
 
     QString fileName = QFileDialog::getOpenFileName(this, "Choose Photo",
                                                      QCoreApplication::applicationFilePath(),
-                                                     "*bmp");
+                                                     "*jpg");
     if (fileName.isEmpty()) {
         QMessageBox::warning(this, "Warning", "Please select a photo");
     } else {
