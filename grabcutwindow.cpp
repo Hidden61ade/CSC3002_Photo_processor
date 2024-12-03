@@ -1,6 +1,8 @@
 ﻿#include "grabcutwindow.h"
 #include "ui_grabcutwindow.h"
 
+#include <iostream>
+
 cv::Mat GrabCutWindow::QImageToMat(const QImage &image) {
     if (image.format() != QImage::Format_RGB888) {
         const QImage &convertedImage = image.convertToFormat(QImage::Format_RGB888);
@@ -25,11 +27,11 @@ GrabCutWindow::~GrabCutWindow()
     delete ui;
     delete pixmapItem;
 }
-
+QString fileName;
 void GrabCutWindow::on_loadButton_clicked()
 {
 
-    QString fileName = QFileDialog::getOpenFileName(this, "Choose Photo",
+    fileName = QFileDialog::getOpenFileName(this, "Choose Photo",
                                                      QCoreApplication::applicationFilePath(),
                                                      "*jpg");
     if (fileName.isEmpty()) {
@@ -55,7 +57,10 @@ void GrabCutWindow::on_runButton_clicked()
     QString x2 =ui->x2lineEdit->text();
     QString y2 =ui->y2LineEdit->text();
     grabcutObject.set_rectangle(x1.toInt(),y1.toInt(),x2.toInt(),y2.toInt());
-    cv::Mat cvImage=QImageToMat(image);
+    cv::Mat cvImage = cv::imread(fileName.toStdString());
+    std::cout << fileName.toStdString() << std::endl;
     grabcutObject.set_image(cvImage);
+    std::cout<<"1"<<std::endl;
     grabcutObject.runGrabcut();
+    std::cout<<"2"<<std::endl;
 }
