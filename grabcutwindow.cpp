@@ -58,9 +58,30 @@ void GrabCutWindow::on_runButton_clicked()
     QString y2 =ui->y2LineEdit->text();
     grabcutObject.set_rectangle(x1.toInt(),y1.toInt(),x2.toInt(),y2.toInt());
     cv::Mat cvImage = cv::imread(fileName.toStdString());
-    std::cout << fileName.toStdString() << std::endl;
     grabcutObject.set_image(cvImage);
-    std::cout<<"1"<<std::endl;
     grabcutObject.runGrabcut();
-    std::cout<<"2"<<std::endl;
+}
+
+QString fileName2;
+void GrabCutWindow::on_loadbutton2_clicked()
+{
+    fileName2 = QFileDialog::getOpenFileName(this, "Choose Photo2",
+                                                     QCoreApplication::applicationFilePath(),
+                                                     "*jpg");
+    if (fileName.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "Please select a photo");
+}
+}
+
+void GrabCutWindow::on_runbutton2_clicked()
+{
+    QString x1 =ui->x1LineEdit->text();
+    QString y1 =ui->y1LineEdit->text();
+    QString x2 =ui->x2lineEdit->text();
+    QString y2 =ui->y2LineEdit->text();
+    grabcut2Object.set_rectangle(x1.toInt(),y1.toInt(),x2.toInt(),y2.toInt());
+    cv::Mat cvImage = cv::imread(fileName.toStdString());
+    cv::Mat cvImage2 = cv::imread(fileName2.toStdString());
+    grabcut2Object.set_image(cvImage,cvImage2);
+    grabcutObject.runGrabcut();
 }

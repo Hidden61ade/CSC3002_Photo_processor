@@ -30,6 +30,10 @@ private slots:
     void on_loadButton_clicked();
 
     void on_runButton_clicked();
+    void on_loadbutton2_clicked();
+
+    void on_runbutton2_clicked();
+
 private:
     Ui::GrabCutWindow *ui;
     QGraphicsView *view;

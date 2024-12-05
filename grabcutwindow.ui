@@ -53,7 +53,7 @@
    <widget class="QPushButton" name="loadButton">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>90</x>
       <y>410</y>
       <width>171</width>
       <height>41</height>
@@ -97,7 +97,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>run</string>
+     <string>run GrabCut1</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -111,6 +111,32 @@
     </property>
     <property name="text">
      <string>Please enter the grabcut position</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="loadbutton2">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>410</y>
+      <width>171</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>loadImage2</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="runbutton2">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>400</y>
+      <width>101</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>run GrabCut2</string>
     </property>
    </widget>
   </widget>
