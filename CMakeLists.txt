@@ -121,6 +121,10 @@ else()
 
     agvview.cpp
     agvview.h
+
+    blueprinttest.cpp
+    blueprinttest.h
+    blueprinttest.ui
   )
 endif()
 
