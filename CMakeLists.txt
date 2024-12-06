@@ -74,6 +74,10 @@ else()
 
     lasso.cpp
     lasso.h
+
+    blueprinttest.cpp
+    blueprinttest.h
+    blueprinttest.ui
   )
 endif()
 
