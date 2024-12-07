@@ -129,6 +129,9 @@ else()
     lassowindow.cpp
     lassowindow.h
     lassowindow.ui
+    blueprinttest.cpp
+    blueprinttest.h
+    blueprinttest.ui
   )
 endif()
 
