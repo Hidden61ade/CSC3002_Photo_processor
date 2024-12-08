@@ -9,6 +9,7 @@
 #include<QGraphicsView>
 #include<QPixmap>
 #include <QGraphicsPixmapItem>
+#include <lasso.h>
 
 namespace Ui {
 class LassoWindow;
@@ -23,8 +24,17 @@ public:
     ~LassoWindow();
 
 
+private slots:
+    void on_loadButton_clicked();
+
 private:
     Ui::LassoWindow *ui;
+    QGraphicsView *view;
+    QGraphicsScene *scene;
+    QGraphicsPixmapItem *pixmapItem;
+    Lasso lassoObject;
+    QImage image;
+
 };
 
 #endif // LASSOWINDOW_H
