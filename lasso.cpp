@@ -2,14 +2,17 @@
 
 Lasso* Lasso::instance = nullptr;
 
-Lasso::Lasso(const std::string& imagePath) {
+Lasso::Lasso() : isDrawing(false) {
+    // 默认构造函数
+}
+
+void Lasso::set_image(const std::string& imagePath) {
     image = cv::imread(imagePath);
     if (image.empty()) {
         std::cout << "Could not open or find the image!" << std::endl;
         exit(-1);
     }
     originalImage = image.clone();
-    isDrawing = false;
 }
 
 void Lasso::mouseCallback(int event, int x, int y, int flags, void* userdata) {
@@ -62,21 +65,27 @@ void Lasso::start() {
     cv::imshow("Image", originalImage);
     cv::waitKey(0);
 }
+//#include "lasso.h"
 
-//#include <opencv2/opencv.hpp>
-//#include <iostream>
+//Lasso* Lasso::instance = nullptr;
 
+//Lasso::Lasso(const std::string& imagePath) {
+//    image = cv::imread(imagePath);
+//    if (image.empty()) {
+//        std::cout << "Could not open or find the image!" << std::endl;
+//        exit(-1);
+//    }
+//    originalImage = image.clone();
+//    isDrawing = false;
+//}
 
-//using namespace std;
+//void Lasso::mouseCallback(int event, int x, int y, int flags, void* userdata) {
+//    if (instance) {
+//        instance->processMouseCallback(event, x, y, flags, userdata);
+//    }
+//}
 
-
-//cv::Mat image, originalImage;
-//std::vector<cv::Point> points;
-
-//bool isDrawing = false;
-
-
-//void mouseCallback(int event, int x, int y, int flags, void* userdata) {
+//void Lasso::processMouseCallback(int event, int x, int y, int flags, void* userdata) {
 //    switch (event) {
 //        case cv::EVENT_LBUTTONDOWN:
 //            points.clear(); // 清空点集
@@ -113,19 +122,11 @@ void Lasso::start() {
 //    }
 //}
 
-////int main() {
-////    image = cv::imread("D:/11111.jpg"); // 用户可以替换为你的图片路径
-////    if (image.empty()) {
-////        std::cout << "Could not open or find the image!" << std::endl;
-////        return -1;
-////    }
+//void Lasso::start() {
+//    instance = this;  // 设置静态指针为当前实例
+//    cv::namedWindow("Image", 1);
+//    cv::setMouseCallback("Image", Lasso::mouseCallback, nullptr);
+//    cv::imshow("Image", originalImage);
+//    cv::waitKey(0);
+//}
 
-////    originalImage = image.clone();
-
-////    cv::namedWindow("Image", 1);
-////    cv::setMouseCallback("Image", mouseCallback);
-////    cv::imshow("Image", originalImage);
-////    cv::waitKey(0);
-
-////    return 0;
-////}
