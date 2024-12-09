@@ -61,6 +61,19 @@
      <string>GrabCut</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="LassoButton">
+    <property name="geometry">
+     <rect>
+      <x>39</x>
+      <y>359</y>
+      <width>231</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Lasso</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

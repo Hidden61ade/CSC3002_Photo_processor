@@ -15,6 +15,9 @@ public:
     explicit ImageProcessorWindow(QWidget *parent = nullptr);
     ~ImageProcessorWindow();
 
+signals:
+    void closed();
+
 private slots:
     void on_LoadButton_clicked();
 
@@ -43,6 +46,8 @@ private slots:
 
 
     void on_pushButton_pressed();
+
+    void on_exitButton_clicked();
 
 private:
     void changeState(int i);

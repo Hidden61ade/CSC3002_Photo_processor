@@ -18,14 +18,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_ImageProcessorButton_clicked()
 {
-    this->hide();
     ImageProcessorWindow *I=new ImageProcessorWindow();
     I->show();
 }
 
 void MainWindow::on_grabCutButton_clicked()
 {
-    this->hide();
     GrabCutWindow * G=new GrabCutWindow();
     G->show();
+}
+
+void MainWindow::on_LassoButton_clicked()
+{
+    LassoWindow *L=new LassoWindow();
+    L->show();
 }
