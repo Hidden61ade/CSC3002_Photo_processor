@@ -83,5 +83,5 @@ void GrabCutWindow::on_runbutton2_clicked()
     cv::Mat cvImage = cv::imread(fileName.toStdString());
     cv::Mat cvImage2 = cv::imread(fileName2.toStdString());
     grabcut2Object.set_image(cvImage,cvImage2);
-    grabcut2Object.runGrabcut();
+    grabcutObject.runGrabcut();
 }

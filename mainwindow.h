@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include "imageprocessorwindow.h"
 #include "grabcutwindow.h"
-#include "lassowindow.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -22,7 +21,6 @@ private slots:
 
     void on_grabCutButton_clicked();
 
-    void on_LassoButton_clicked();
 private:
     Ui::MainWindow *ui;
 };

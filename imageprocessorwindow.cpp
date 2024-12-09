@@ -406,8 +406,3 @@ void ImageProcessorWindow::on_pushButton_pressed()
             paras[10]/10.0f,paras[11]/10.0f,paras[12]/10.0f,paras[13]/10.0f);
     ImageProcessorGUIController::GetInstance().ShowImage(ui->graphicsView,this);
 }
-
-void ImageProcessorWindow::on_exitButton_clicked()
-{
-    this->close();
-}
