@@ -27,6 +27,8 @@ public:
 private slots:
     void on_loadButton_clicked();
 
+    void on_runButton_clicked();
+
 private:
     Ui::LassoWindow *ui;
     QGraphicsView *view;

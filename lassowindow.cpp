@@ -6,26 +6,30 @@ LassoWindow::LassoWindow(QWidget *parent) :
     ui(new Ui::LassoWindow)
 {
     ui->setupUi(this);
+    scene = new QGraphicsScene(this);
+    view = ui->graphicsView;
+    view->setScene(scene);
 }
 
 LassoWindow::~LassoWindow()
 {
     delete ui;
+    delete pixmapItem;
 }
 
-QString fileName;
+QString lassoFileName;
 void LassoWindow::on_loadButton_clicked()
 {
-    fileName = QFileDialog::getOpenFileName(this, "Choose Photo",
+    lassoFileName = QFileDialog::getOpenFileName(this, "Choose Photo",
                                                      QCoreApplication::applicationFilePath(),
                                                      "*jpg");
-    if (fileName.isEmpty()) {
+    if (lassoFileName.isEmpty()) {
         QMessageBox::warning(this, "Warning", "Please select a photo");
 }else {
-        image.load(fileName);
+        image.load(lassoFileName);
         scene->clear();
 
-        QPixmap pixmap(fileName);
+        QPixmap pixmap(lassoFileName);
         pixmapItem = new QGraphicsPixmapItem(pixmap);
         scene->addItem(pixmapItem);
 
@@ -34,4 +38,10 @@ void LassoWindow::on_loadButton_clicked()
 }
 
 
+}
+
+void LassoWindow::on_runButton_clicked()
+{
+    lassoObject.set_image(lassoFileName.toStdString());
+    lassoObject.start();
 }
