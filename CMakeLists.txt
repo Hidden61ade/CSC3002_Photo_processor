@@ -69,6 +69,10 @@ if(ANDROID)
       mirror.cpp
       watermark.h
       watermark.cpp
+
+      lassowindow.cpp
+      lassowindow.h
+      lassowindow.ui
   )
 else()
   add_executable(CSC3002_Photo_processor
@@ -122,6 +126,9 @@ else()
     agvview.cpp
     agvview.h
 
+    lassowindow.cpp
+    lassowindow.h
+    lassowindow.ui
     blueprinttest.cpp
     blueprinttest.h
     blueprinttest.ui
